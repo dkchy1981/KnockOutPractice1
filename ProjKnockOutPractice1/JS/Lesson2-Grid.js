@@ -1,14 +1,20 @@
 var initialData = [
-    { name: "Well-Travelled Kitten", sales: 352, price: 75.95 } ,
+    { name: "Well-Travelled Kitten", sales: 352, price: 75.95 },
     { name: "Speedy Coyote", sales: 89, price: 190.00 },
     { name: "Furious Lizard", sales: 152, price: 25.00 },
     { name: "Indifferent Monkey", sales: 1, price: 99.95 },
     { name: "Brooding Dragon", sales: 0, price: 6350 },
     { name: "Ingenious Tadpole", sales: 39450, price: 0.35 },
-    { name: "Optimistic Snail", sales: 420, price: 1.50 }    
+    { name: "Optimistic Snail", sales: 420, price: 1.50 }
 ];
+var gridColumns = ["name", "sales", "price"];
 
-var PagedGridModel = function (items) {
+var PagedGridModel = function (items, gridColumn) {
+
+    this.shortGridColumns = ko.observableArray(gridColumn);
+    this.selectedGridColumn = ko.observable('name');
+    this.shortedGridColumn = ko.observable('name');
+    var shortDirection = 'A';
 
     this.showGrid = ko.observable(true);
     this.showTable = ko.observable(false);
@@ -42,11 +48,74 @@ var PagedGridModel = function (items) {
     }
 
 
-    this.sortByName = function () {
+    this.sortGrid = function () {
+        
+        
+        if (this.shortedGridColumn() == this.selectedGridColumn()) {
+            console.log(shortDirection);
+
+            shortDirection = (shortDirection == 'D' ? 'A' : 'D');
+          
+        }
+        else
+        {
+            shortDirection = 'A';
+        }
+        this.shortedGridColumn(this.selectedGridColumn());
+
+        console.log(this.selectedGridColumn());
+        console.log(this.shortedGridColumn());
+        
+        console.log(shortDirection);
+        
+        var selectedColumnForSorting = this.selectedGridColumn();
         this.items.sort(function (a, b) {
-            return a.name < b.name ? -1 : 1;
+            switch (selectedColumnForSorting) {
+                case 'name':
+                    {
+                        if (shortDirection == 'A') {
+                            return a.name < b.name ? -1 : 1;
+                        }
+                        else if (shortDirection == 'D') {
+                            return a.name > b.name ? -1 : 1;
+                        }
+                    }
+                    break;
+                case 'sales':
+                    {
+                        if (shortDirection == 'A') {
+                            return a.sales < b.sales ? -1 : 1;
+                        }
+                        else if (shortDirection == 'D') {
+                            return a.sales > b.sales ? -1 : 1;
+                        }
+                    }
+                    break;
+                case 'price':
+                    {
+                        if (shortDirection == 'A') {
+                            return a.price < b.price ? -1 : 1;
+                        }
+                        else if (shortDirection == 'D') {
+                            return a.price > b.price ? -1 : 1;
+                        }
+                    }
+                    break;
+
+                default:
+                    {
+                        if (shortDirection == 'A') {
+                            return a.name < b.name ? -1 : 1;
+                        }
+                        else if (shortDirection == 'D') {
+                            return a.name > b.name ? -1 : 1;
+                        }
+                    }
+            }
+
         });
     };
+
 
     this.jumpToFirstPage = function () {
         this.gridViewModel.currentPageIndex(0);
@@ -63,4 +132,4 @@ var PagedGridModel = function (items) {
     });
 };
 
-ko.applyBindings(new PagedGridModel(initialData));
+ko.applyBindings(new PagedGridModel(initialData, gridColumns));
