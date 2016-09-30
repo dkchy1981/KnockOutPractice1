@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />    
+</head>
+<body>        
+        <p>First name: <input data-bind="value: firstName" /> (Value update on blur- default)</p>
+        <p>Mid name: <input data-bind='value: midName, valueUpdate: "afterkeydown"' /> (Value update on blur 'afterkeydown' event)</p>
+        <p>Last name: <input data-bind='value: lastName,valueUpdate: "afterkeyup"' /> (Value update on blur 'afterkeyup' event)</p>
+        <h2>Hello, <span data-bind="text: fullName"> </span>!</h2>
+</body>
+</html>
+<script type="text/javascript" src="../JS/Lesson1.js"></script>
