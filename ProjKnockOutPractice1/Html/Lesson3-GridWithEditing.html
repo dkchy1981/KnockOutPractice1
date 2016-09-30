@@ -1,0 +1,214 @@
+﻿<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <style>
+        td {
+            align-items: center;
+            padding-left: 10px;
+        }
+
+        .divTitle {
+            font-size: 26px;
+            font-weight: bold;
+            align-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="divTitle"> - : Employ Details : -</div>
+    <!--Ends Here-->
+    <!--Templates-->
+    <!--View Template-->
+    <table border="1" style="width:100%">
+        <thead>
+            <tr>
+                <th>
+                    No
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Salary
+                </th>
+                <th>
+                    DeptName
+                </th>
+                <th>
+                    Designation
+                </th>
+                <th>
+
+                </th>
+            </tr>
+        </thead>
+        <tbody data-bind="template:{name:currentTemplateSelector, foreach: Employees}"></tbody>
+    </table>
+    <script type="text/html" id="viewtemplate">
+        <tr>
+            <td>
+                <span data-bind="text: $data.EmpNo"></span>
+            </td>
+            <td>
+                <span data-bind="text: $data.EmpName"></span>
+            </td>
+            <td>
+                <span data-bind="text: $data.Salary"></span>
+            </td>
+            <td>
+                <span data-bind="text: $data.DeptName"></span>
+            </td>
+            <td>
+                <span data-bind="text: $data.Designation"></span>
+            </td>
+            <td colspan="2">
+                <div style="align-self:center">
+                    <button data-bind="click: $root.changeTemplate">Edit</button>
+                </div>
+            </td>
+        </tr>
+    </script>
+    <!--Ends Here-->
+    <!--Edit Template-->
+    <script type="text/html" id="edittemplate">
+        <tr>
+            <td>
+                <span data-bind="text: $data.EmpNo"></span>
+            </td>
+            <td>
+                <input type="text" data-bind="value: $data.EmpName" />
+            </td>
+            <td>
+                <input type="text" data-bind="value: $data.Salary" />
+            </td>
+            <td>
+                <input type="text" data-bind="value: $data.DeptName" />
+            </td>
+            <td>
+                <input type="text" data-bind="value: $data.Designation" />
+            </td>
+            <td colspan="2">
+                <div style="align-self:center">
+                    <button data-bind="click: $root.Save">Save</button>
+                    <button data-bind="click: $root.changeTemplate">Cancel</button>
+                </div>
+            </td>
+        </tr>
+    </script>
+
+
+    
+    <!--Ends Here-->
+    <!--Ends Here-->
+    <!--The View Model where the Data Information will be specified-->
+    <script type="text/javascript">
+
+        var initialData = [
+    { EmpNo: 1, EmpName: "Optimistic Snail", Salary: 420, DeptName: 'SFW', Designation: 'TL' },
+        { EmpNo: 2, EmpName: "Dkc", Salary: 1200, DeptName: 'SFW', Designation: 'SE' }
+        ];
+        var EmpViewModel = function () {
+            var self = this;
+
+            //The default Template Value set to the "viewtemplate"
+
+            self.currentTemplate = ko.observable("viewtemplate");
+
+            self.Employees = ko.observableArray(initialData);
+
+
+
+
+            //Function To Retrive Data from using ajax call to WEB API
+
+            //Method to Save the Updated Record
+            self.Save = function (t) {
+                var Employee = {};
+                Employee.EmpNo = t.EmpNo;
+                Employee.EmpName = t.EmpName;
+                Employee.Salary = t.Salary;
+                Employee.DeptName = t.DeptName;
+                Employee.Designation = t.Designation;
+                $.ajax({
+                    type: "POST",
+                    url: "../DemoWebApi/api/Employee/UpdateEmployee",
+                    data: Employee,
+                    success: function (data) {
+                        console.log(data);
+                        alert("Record Updated Successfully " + data.status);
+                        self.changeTemplate(); //Reset the Template
+                    },
+                    error: function (err) {
+                        console.log(data);
+                        alert("Error Occures, Please Reload the Page and Try Again " + err.status);
+                        self.changeTemplate();
+                    }
+                });
+
+            };
+
+            self.SaveData = function (t) {
+                //alert(t.EmpName);
+
+                var Employee = {};
+                Employee.EmpNo = t.EmpNo;
+                Employee.EmpName = t.EmpName;
+                Employee.Salary = t.Salary;
+                Employee.DeptName = t.DeptName;
+                Employee.Designation = t.Designation;
+
+                //alert(Employee);
+
+                $.ajax({
+                    type: "POST",
+                    data: Employee,
+                    url: "../DemoWebApi/api/Employee/GetEmployeeInfos?id=" + Employee.EmpNo,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        //alert("Done");
+                        self.Employees(data);
+                    },
+                    error: function (err) {
+                        alert("Error : " + err.status + "   " + err.statusText);
+                    }
+                });
+            };
+            //Ends Here
+
+
+
+
+            ////Method called when the template is to be changed
+            self.changeTemplate = function () {
+                self.currentTemplate(self.currentTemplate() === "viewtemplate" ? "edittemplate" : "viewtemplate");
+            };
+
+            var tmpl;
+            self.currentTemplateSelector = function (vm) {
+
+                if (!tmpl) {
+                    tmpl = ko.computed(function () {
+                        return self.currentTemplate();
+                    }, vm);
+                }
+                return tmpl();
+            }
+        };
+
+        ////Method to Reset theEdit View
+        //self.resettemplate = function (t) {
+        //    alert('4');
+        //    this.editRecordtemplate("viewtemplate");
+        //};
+
+        ko.applyBindings(new EmpViewModel());
+    </script>
+    <!--Ends Here-->
+
+
+</body>
+</html>

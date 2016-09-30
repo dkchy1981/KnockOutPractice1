@@ -106,6 +106,7 @@
     <Content Include="CSS\Lesson2-Grid.css" />
     <Content Include="Html\Lesson1.html" />
     <Content Include="Html\Lesson2-Grid.html" />
+    <Content Include="Html\Lesson3-GridWithEditing.html" />
     <Content Include="JS\Lesson1.js" />
     <Content Include="JS\Lesson2-Grid.js" />
     <Content Include="Web.config" />
