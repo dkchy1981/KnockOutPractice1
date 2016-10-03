@@ -126,8 +126,7 @@ var PagedGridModel = function (items, gridColumn) {
         columns: [
             { headerText: "Item Name", rowText: "name" },
             { headerText: "Sales Count", rowText: "sales" },
-            { headerText: "Price", rowText: function (item) { return "$" + item.price.toFixed(2) } },
-            { headerText: "Edit", rowText: function (item) { return this.items[item] } },
+            { headerText: "Price", rowText: function (item) { return "$" + item.price.toFixed(2) } }            
 
         ],
         pageSize: 4
